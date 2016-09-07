@@ -37,12 +37,7 @@ class ParseOperation: NSOperation {
                     }
                 }
 
-                let idEntry = entry["id"] as! [String : AnyObject]
-                let appURLString = idEntry["label"] as! String
-                let idEntryAttributes = idEntry["attributes"] as! [String : AnyObject]
-                let id = idEntryAttributes["im:id"] as! String
-
-                let appRecord = AppRecord(id: id, appName: appName, artist: artist, imageURLString: imageURLString!, appURLString: appURLString, appIcon: nil)
+                let appRecord = AppRecord(appName: appName, artist: artist, imageURLString: imageURLString!)
                 self.appRecords.append(appRecord)
             }
 

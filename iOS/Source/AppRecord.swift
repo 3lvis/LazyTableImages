@@ -1,10 +1,14 @@
 import UIKit
 
-struct AppRecord {
-    let id: String
+class AppRecord {
     let appName: String
     let artist: String
     let imageURLString: String
-    let appURLString: String
     var appIcon: UIImage?
+
+    init(appName: String, artist: String, imageURLString: String) {
+        self.appName = appName
+        self.artist = artist
+        self.imageURLString = imageURLString
+    }
 }

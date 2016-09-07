@@ -85,13 +85,11 @@ extension RootController: IconDownloaderDelegate {
         guard let cell = self.tableView.cellForRowAtIndexPath(iconDownloader.indexPath) else { return }
         if let error = error {
             fatalError("Error loading thumbnails: \(error.localizedDescription)")
-        } else if let image = image {
-            var appRecord = self.appRecords[iconDownloader.indexPath.row]
+        } else if let image = image, appRecord = appRecord {
             appRecord.appIcon = image
-            self.appRecords[iconDownloader.indexPath.row] = appRecord
             cell.imageView?.image = image
         } else {
-            fatalError("No error or image")
+            fatalError("No error, image or app record")
         }
         self.imageDownloadsInProgress.removeValueForKey(iconDownloader.indexPath)
     }
