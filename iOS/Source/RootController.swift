@@ -27,9 +27,7 @@ class RootController: UITableViewController {
         if let icon = appRecord.appIcon {
             cell.imageView?.image = icon
         } else {
-            if self.tableView.dragging == false && self.tableView.decelerating == false {
-                self.startIconDownload(appRecord: appRecord, forIndexPath: indexPath)
-            }
+            self.startIconDownload(appRecord: appRecord, forIndexPath: indexPath)
             cell.imageView?.image = UIImage(named: "placeholder")
         }
 
