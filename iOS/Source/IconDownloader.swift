@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 protocol IconDownloaderDelegate: class {
-    func iconDownloader(iconDownloader: IconDownloader, didFinishedDownloadingImage image: UIImage?, forAppRecord appRecord: AppRecord?, error: NSError?)
+    func iconDownloader(iconDownloader: IconDownloader, didFinishedDownloadingImage image: UIImage?, error: NSError?)
 }
 
 class IconDownloader {
@@ -28,7 +28,7 @@ class IconDownloader {
                     // then your Info.plist has not been properly configured to match the target server.
                     fatalError()
                 } else {
-                    self.delegate?.iconDownloader(self, didFinishedDownloadingImage: nil, forAppRecord: nil, error: error)
+                    self.delegate?.iconDownloader(self, didFinishedDownloadingImage: nil, error: error)
                 }
             } else {
                 NSOperationQueue.mainQueue().addOperationWithBlock {
@@ -45,7 +45,7 @@ class IconDownloader {
                         self.appRecord.appIcon = image
                     }
 
-                    self.delegate?.iconDownloader(self, didFinishedDownloadingImage: image, forAppRecord: self.appRecord, error: nil)
+                    self.delegate?.iconDownloader(self, didFinishedDownloadingImage: image, error: nil)
                 }
             }
         }
