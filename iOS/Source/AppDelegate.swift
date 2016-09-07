@@ -60,13 +60,13 @@ extension AppDelegate: UIApplicationDelegate {
 }
 
 extension AppDelegate: ParseOperationDelegate {
-    func parseOperation(parseOperation: ParseOperation, didFinishedWithItems items: [AppRecord], error: NSError?) {
+    func parseOperation(parseOperation: ParseOperation, didFinishWithAppRecords appRecords: [AppRecord], error: NSError?) {
         dispatch_async(dispatch_get_main_queue()) {
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
             if let error = error {
                 self.handleError(error)
             } else {
-                self.rootController.entries = items
+                self.rootController.appRecords = appRecords
             }
         }
     }

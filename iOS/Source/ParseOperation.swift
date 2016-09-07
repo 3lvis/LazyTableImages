@@ -1,25 +1,15 @@
 import Foundation
 
 protocol ParseOperationDelegate: class {
-    func parseOperation(parseOperation: ParseOperation, didFinishedWithItems items: [AppRecord], error: NSError?)
+    func parseOperation(parseOperation: ParseOperation, didFinishWithAppRecords appRecords: [AppRecord], error: NSError?)
 }
-
-//enum ParsedAttributes: String {
-//    case feed = "feed"
-//    case entry = "entry"
-//
-//    case id = "id"
-//    case name = "im:name"
-//    case image = "im:image"
-//    case artist = "im:artist"
-//}
 
 class ParseOperation: NSOperation {
     weak var delegate: ParseOperationDelegate?
 
     let data: NSData
 
-    var items = [AppRecord]()
+    var appRecords = [AppRecord]()
 
     init(data: NSData) {
         self.data = data
@@ -53,12 +43,12 @@ class ParseOperation: NSOperation {
                 let id = idEntryAttributes["im:id"] as! String
 
                 let appRecord = AppRecord(id: id, appName: appName, artist: artist, imageURLString: imageURLString!, appURLString: appURLString, appIcon: nil)
-                self.items.append(appRecord)
+                self.appRecords.append(appRecord)
             }
 
-            self.delegate?.parseOperation(self, didFinishedWithItems: self.items, error: nil)
+            self.delegate?.parseOperation(self, didFinishWithAppRecords: self.appRecords, error: nil)
         } catch let error as NSError {
-            self.delegate?.parseOperation(self, didFinishedWithItems: self.items, error: error)
+            self.delegate?.parseOperation(self, didFinishWithAppRecords: self.appRecords, error: error)
         }
     }
 }
