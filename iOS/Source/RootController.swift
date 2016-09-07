@@ -83,9 +83,8 @@ class RootController: UITableViewController {
 extension RootController: IconDownloaderDelegate {
     func iconDownloader(iconDownloader: IconDownloader, didFinishedDownloadingImage image: UIImage?, forAppRecord appRecord: AppRecord?, error: NSError?) {
         guard let cell = self.tableView.cellForRowAtIndexPath(iconDownloader.indexPath) else { return }
-        if let _ = error {
-            // Display error thumbnail
-            cell.imageView?.image = UIImage(named: "placeholder")
+        if let error = error {
+            fatalError("Error loading thumbnails: \(error.localizedDescription)")
         } else if let image = image {
             var appRecord = self.appRecords[iconDownloader.indexPath.row]
             appRecord.appIcon = image

@@ -2,7 +2,7 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder {
-    static let topPaidAppsFeed = "http://phobos.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=75/json"
+    static let topPaidAppsFeed = "http://phobos.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=200/json"
 
     var window: UIWindow?
     var rootController = RootController()
@@ -29,13 +29,7 @@ extension AppDelegate: UIApplicationDelegate {
             if let error = error {
                 NSOperationQueue.mainQueue().addOperationWithBlock {
                     UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-                    if error.code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
-                        // If you get error NSURLErrorAppTransportSecurityRequiresSecureConnection (-1022),
-                        // then your Info.plist has not been properly configured to match the target server.
-                        fatalError()
-                    } else {
-                        self.handleError(error)
-                    }
+                    fatalError("Error fetching data: \(error.localizedDescription)")
                 }
             } else if let data = data {
                 let parseOperation = ParseOperation(data: data)
@@ -50,13 +44,6 @@ extension AppDelegate: UIApplicationDelegate {
 
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
     }
-
-    func handleError(error: NSError) {
-        let alert = UIAlertController(title: "Cannot show top paid apps", message: error.localizedDescription, preferredStyle: .ActionSheet)
-        let OKAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
-        alert.addAction(OKAction)
-        self.window?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
-    }
 }
 
 extension AppDelegate: ParseOperationDelegate {
@@ -64,7 +51,7 @@ extension AppDelegate: ParseOperationDelegate {
         dispatch_async(dispatch_get_main_queue()) {
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
             if let error = error {
-                self.handleError(error)
+                fatalError("Error parsing data: \(error.localizedDescription)")
             } else {
                 self.rootController.appRecords = appRecords
             }
