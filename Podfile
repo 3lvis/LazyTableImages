@@ -2,7 +2,6 @@ use_frameworks!
 
 abstract_target 'CocoaPods' do
   pod 'Sync'
-  pod 'Networking'
   pod 'DATASource'
 
   target 'iOS' do

@@ -1,7 +1,7 @@
 import UIKit
 
 class RootController: UITableViewController {
-    var imageDownloadsInProgress = [NSIndexPath : IconDownloader]()
+    var imageDownloadsInProgress = [IndexPath : IconDownloader]()
 
     var appRecords = [AppRecord]() {
         didSet {
@@ -12,15 +12,15 @@ class RootController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.appRecords.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let appRecord = self.appRecords[indexPath.row]
         cell.textLabel?.text = appRecord.appName
         cell.detailTextLabel?.text = appRecord.artist
@@ -46,7 +46,7 @@ class RootController: UITableViewController {
         self.terminateAllDownloads()
     }
 
-    func startIconDownload(appRecord appRecord: AppRecord, forIndexPath indexPath: NSIndexPath) {
+    func startIconDownload(appRecord: AppRecord, forIndexPath indexPath: IndexPath) {
         guard self.imageDownloadsInProgress[indexPath] == nil else { return }
 
         let iconDownloader = IconDownloader(appRecord: appRecord, indexPath: indexPath)
@@ -58,7 +58,7 @@ class RootController: UITableViewController {
     func loadImagesForOnscreenRows() {
         guard self.appRecords.count != 0 else { return }
 
-        let visibleIndexPaths = self.tableView.indexPathsForVisibleRows ?? [NSIndexPath]()
+        let visibleIndexPaths = self.tableView.indexPathsForVisibleRows ?? [IndexPath]()
         for indexPath in visibleIndexPaths {
             let appRecord = self.appRecords[indexPath.row]
             if appRecord.appIcon == nil {
@@ -67,25 +67,25 @@ class RootController: UITableViewController {
         }
     }
 
-    override func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             self.loadImagesForOnscreenRows()
         }
     }
 
-    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.loadImagesForOnscreenRows()
     }
 }
 
 extension RootController: IconDownloaderDelegate {
-    func iconDownloaderDidFinishDownloadingImage(iconDownloader: IconDownloader, error: NSError?) {
-        guard let cell = self.tableView.cellForRowAtIndexPath(iconDownloader.indexPath) else { return }
+    func iconDownloaderDidFinishDownloadingImage(_ iconDownloader: IconDownloader, error: NSError?) {
+        guard let cell = self.tableView.cellForRow(at: iconDownloader.indexPath as IndexPath) else { return }
         if let error = error {
             fatalError("Error loading thumbnails: \(error.localizedDescription)")
         } else {
             cell.imageView?.image = iconDownloader.appRecord.appIcon
         }
-        self.imageDownloadsInProgress.removeValueForKey(iconDownloader.indexPath)
+        self.imageDownloadsInProgress.removeValue(forKey: iconDownloader.indexPath as IndexPath)
     }
 }

@@ -6,12 +6,12 @@ class AppDelegate: UIResponder {
 
     var window: UIWindow?
     var rootController = RootController()
-    let queue = NSOperationQueue()
+    let queue = OperationQueue()
 }
 
 extension AppDelegate: UIApplicationDelegate {
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        window = UIWindow(frame: UIScreen.main.bounds)
         guard let window = self.window else { fatalError("Window not found") }
 
         let navigationController = UINavigationController(rootViewController: self.rootController)
@@ -24,11 +24,11 @@ extension AppDelegate: UIApplicationDelegate {
     }
 
     func fetchData() {
-        let request = NSURLRequest(URL: NSURL(string: AppDelegate.topPaidAppsFeed)!)
-        let sessionTask = NSURLSession.sharedSession().dataTaskWithRequest(request) { data, response, error in
+        let request = URLRequest(url: URL(string: AppDelegate.topPaidAppsFeed)!)
+        let sessionTask = URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
             if let error = error {
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                OperationQueue.main.addOperation {
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     fatalError("Error fetching data: \(error.localizedDescription)")
                 }
             } else if let data = data {
@@ -38,18 +38,18 @@ extension AppDelegate: UIApplicationDelegate {
             } else {
                 fatalError("No error or data")
             }
-        }
+        }) 
 
         sessionTask.resume()
 
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
 }
 
 extension AppDelegate: ParseOperationDelegate {
-    func parseOperation(parseOperation: ParseOperation, didFinishWithAppRecords appRecords: [AppRecord], error: NSError?) {
-        dispatch_async(dispatch_get_main_queue()) {
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+    func parseOperation(_ parseOperation: ParseOperation, didFinishWithAppRecords appRecords: [AppRecord], error: NSError?) {
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
             if let error = error {
                 fatalError("Error parsing data: \(error.localizedDescription)")
             } else {

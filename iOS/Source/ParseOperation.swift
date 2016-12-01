@@ -1,23 +1,23 @@
 import Foundation
 
 protocol ParseOperationDelegate: class {
-    func parseOperation(parseOperation: ParseOperation, didFinishWithAppRecords appRecords: [AppRecord], error: NSError?)
+    func parseOperation(_ parseOperation: ParseOperation, didFinishWithAppRecords appRecords: [AppRecord], error: NSError?)
 }
 
-class ParseOperation: NSOperation {
+class ParseOperation: Operation {
     weak var delegate: ParseOperationDelegate?
 
-    let data: NSData
+    let data: Data
 
     var appRecords = [AppRecord]()
 
-    init(data: NSData) {
+    init(data: Data) {
         self.data = data
     }
 
     override func main() {
         do {
-            let JSON = try NSJSONSerialization.JSONObjectWithData(self.data, options: []) as! [String : AnyObject]
+            let JSON = try JSONSerialization.jsonObject(with: self.data, options: []) as! [String : AnyObject]
             let feed = JSON["feed"] as! [String : AnyObject]
             let entries = feed["entry"] as! [[String : AnyObject]]
             for entry in entries {
