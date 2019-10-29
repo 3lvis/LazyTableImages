@@ -22,8 +22,8 @@ class IconDownloader {
     func startDownload() {
         let request = URLRequest(url: URL(string: self.appRecord.imageURLString)!)
         self.sessionTask = URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
-            if let error = error as? NSError {
-                if error.code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
+            if let error = error {
+                if (error as NSError).code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
                     // If you get error NSURLErrorAppTransportSecurityRequiresSecureConnection (-1022),
                     // then your Info.plist has not been properly configured to match the target server.
                     fatalError()
